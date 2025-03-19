@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:test_1/services/firebase_auth_services/firebase_auth_services.dart';
 import 'package:test_1/views/home.dart';
 import 'package:test_1/views/regist_screen.dart';
 
@@ -13,21 +14,19 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final AuthService authService = AuthService();
 
-  void login() async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
+  void login(BuildContext context) async {
+    final user = await authService.login(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+
+    if (user == 'success') {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),
       );
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Login Gagal: ${e.toString()}")));
     }
   }
 
@@ -72,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: login,
+                  onPressed: () => login(context),
                   child: Text(
                     'Login',
                     style: TextStyle(
@@ -82,6 +81,111 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(child: Divider(thickness: 1, color: Colors.grey)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      'or sign in with',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                  Expanded(child: Divider(thickness: 1, color: Colors.grey)),
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Tombol Google
+                  GestureDetector(
+                    onTap: () async {
+                      String result = await authService.signInWithGoogle();
+                      if (result == "success") {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                        );
+                      }
+                      // TODO: Tambahkan logika autentikasi Google
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        'assets/images/google_logo.png',
+                        height: 30,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: Tambahkan logika autentikasi Google
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        'assets/images/facebook_logo.png',
+                        height: 30,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: Tambahkan logika autentikasi Google
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        'assets/images/x_logo.png',
+                        height: 30,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               Center(
                 child: TextButton(

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:test_1/services/firebase_auth_services/firebase_auth_services.dart';
 import 'package:test_1/views/login_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
 
+  final AuthService authService = AuthService();
   void logout(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
+    await authService.signOut();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),

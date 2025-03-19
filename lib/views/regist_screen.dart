@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'login_screen.dart';
-import 'home.dart';
+import 'package:test_1/services/firebase_auth_services/firebase_auth_services.dart';
+import 'package:test_1/views/home.dart';
+import 'package:test_1/views/login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,28 +16,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
+  final AuthService authService = AuthService();
 
   void register(BuildContext context) async {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-            email: emailController.text,
-            password: passwordController.text,
-          );
+    String result = await authService.register(
+      name: nameController.text.trim(),
+      email: emailController.text.trim(),
+      password: passwordController.text,
+    );
 
-      // Simpan data user ke Firestore
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .set({'name': nameController.text, 'email': emailController.text});
-
+    if (result == 'success') {
+      // Jika registrasi berhasil, arahkan ke halaman Home atau Login
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Registrasi Gagal: ${e.toString()}")),
       );
     }
   }
