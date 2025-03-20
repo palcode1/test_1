@@ -20,18 +20,31 @@ class HomeScreen extends StatelessWidget {
     User? user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Home")),
+      appBar: AppBar(),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text("User"),
+              accountEmail: Text(user?.email ?? "user@example.com"),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(Icons.person, size: 40, color: Colors.blue),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.exit_to_app, color: Colors.red),
+              title: Text("Logout", style: TextStyle(color: Colors.red)),
+              onTap: () => logout(context),
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Selamat datang, ${user?.email ?? 'User'}"),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => logout(context),
-              child: Text('Logout'),
-            ),
-          ],
+          children: [Text("Selamat datang, ${user?.email ?? 'User'}")],
         ),
       ),
     );
