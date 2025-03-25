@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:test_1/utils/toast.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   // Mapping error message dari Firebase ke pesan yang lebih jelas
   String _handleFirebaseError(String errorCode) {
@@ -58,18 +60,24 @@ class AuthService {
   Future<String> register({
     required String name,
     required String email,
+    required String phone,
     required String password,
   }) async {
     try {
-      if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      if (name.isEmpty || email.isEmpty || phone.isEmpty || password.isEmpty) {
         showToast("Semua data harus diisi!");
         return "empty_fields";
       }
 
-      await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      await _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'uid': userCredential.user!.uid,
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'created_at': DateTime.now(),
+      });
       showToast("Pendaftaran berhasil!", success: true);
       return "success";
     } on FirebaseAuthException catch (e) {
