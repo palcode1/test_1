@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:test_1/services/firebase_auth_services/firebase_auth_services.dart';
+import 'package:test_1/views/apps_setting/edit_password.dart';
 import 'package:test_1/views/login_screen.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -22,7 +23,32 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(100), // Tinggi AppBar lebih besar
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.yellow[100], // Warna latar AppBar
+          ),
+          padding: EdgeInsets.only(top: 40, left: 16, right: 16, bottom: 16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/cog.png',
+                width: 30,
+                height: 30,
+              ), // Ikon pengaturan
+              SizedBox(width: 10),
+              Text(
+                'Pengaturan',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ),
       body: Container(
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -32,32 +58,6 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
         child: Column(
           children: [
-            const SizedBox(height: 40), // Memberi jarak dari atas
-            Container(
-              padding: const EdgeInsets.all(
-                16,
-              ), // Padding dalam container header
-              decoration: BoxDecoration(
-                color: Colors.yellow[100], // Warna latar header
-                borderRadius: BorderRadius.circular(
-                  10,
-                ), // Membuat sudut melengkung
-              ),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/images/cog.png',
-                    width: 30,
-                    height: 30,
-                  ), // Ikon pengaturan
-                  const SizedBox(width: 10), // Jarak antara ikon dan teks
-                  const Text(
-                    'Pengaturan', // Judul header
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ), // Penutup Container header
             const SizedBox(height: 20), // Jarak antara header dan daftar menu
             _buildSettingItem(
               'assets/images/user.png',
@@ -66,6 +66,12 @@ class _SettingScreenState extends State<SettingScreen> {
             _buildSettingItem(
               'assets/images/password.png',
               'Ubah Password',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditPasswordScreen()),
+                );
+              },
             ), // Menu Ubah Password
             _buildSettingItem(
               'assets/images/notification.png',
@@ -103,11 +109,12 @@ class _SettingScreenState extends State<SettingScreen> {
           vertical: 6,
         ), // Jarak antar item menu
         child: Container(
+          width: double.infinity,
           padding: const EdgeInsets.all(
             16,
           ), // Padding dalam container item menu
           decoration: BoxDecoration(
-            color: Colors.yellow[100], // Warna latar item menu
+            color: Color(0xFFFADA7A), // Warna latar item menu
             borderRadius: BorderRadius.circular(10), // Membuat sudut melengkung
             boxShadow: [
               BoxShadow(

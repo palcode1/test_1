@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_1/databases/db_model.dart';
+import 'package:test_1/databases/db_service.dart';
 
 class AppointmentScreen extends StatefulWidget {
   @override
@@ -13,9 +15,35 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   String? selectedDate;
   String? selectedTime;
 
+  final DBHelper dbHelper = DBHelper(); // Inisialisasi DBHelper
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(100), // Tinggi AppBar lebih besar
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.yellow[100], // Warna latar AppBar
+          ),
+          padding: EdgeInsets.only(top: 40, left: 16, right: 16, bottom: 16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/add-event.png',
+                width: 30,
+                height: 30,
+              ), // Ikon pengaturan
+              SizedBox(width: 10),
+              Text(
+                'Buat Janji Temu',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ),
       body: Container(
         padding: EdgeInsets.all(16), // Memberikan padding di seluruh sisi
         decoration: BoxDecoration(
@@ -31,52 +59,30 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 40), // Jarak dari atas layar
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.yellow[100], // Warna background kuning muda
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/images/add-event.png',
-                    width: 30,
-                    height: 30,
-                  ), // Ikon Janji Temu
-                  SizedBox(width: 10),
-                  Text(
-                    "Buat Appointment",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
+            SizedBox(), // Jarak dari atas layar
+            // Formulir Dropdown menggunakan data dari DBModel
+            _buildDropdown(
+              "Area",
+              selectedArea,
+              DBModel.areas,
+              (value) => setState(() => selectedArea = value),
             ),
-            SizedBox(height: 20),
-
-            // Formulir Dropdown
-            _buildDropdown("Area", selectedArea, [
-              "Area 1",
-              "Area 2",
-              "Area 3",
-            ], (value) => setState(() => selectedArea = value)),
             _buildDropdown(
               "Rumah Sakit",
               selectedHospital,
-              ["RS A", "RS B", "RS C"],
+              DBModel.hospitals,
               (value) => setState(() => selectedHospital = value),
             ),
             _buildDropdown(
               "Spesialisasi",
               selectedSpeciality,
-              ["Dokter Umum", "Kardiologi", "Ortopedi"],
+              DBModel.specializations,
               (value) => setState(() => selectedSpeciality = value),
             ),
             _buildDropdown(
               "Pilih Dokter",
               selectedDoctor,
-              ["Dr. John", "Dr. Sarah", "Dr. Michael"],
+              DBModel.doctors,
               (value) => setState(() => selectedDoctor = value),
             ),
             _buildDropdown(
@@ -99,7 +105,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.yellow[100], // Warna tombol
+                  backgroundColor: Color(0xFFFADA7A), // Warna tombol
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(
                       10,
@@ -108,8 +114,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   padding: EdgeInsets.symmetric(vertical: 15),
                 ),
                 onPressed: () {
-                  // Logika untuk membuat janji temu bisa ditambahkan di sini
-                  print("Janji Temu Dibuat!");
+                  _saveAppointment(); // Simpan data ke Firestore
                 },
                 child: Text(
                   "Buat Janji Temu",
@@ -125,6 +130,40 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         ),
       ),
     );
+  }
+
+  // Fungsi menyimpan data ke Firestore
+  void _saveAppointment() {
+    if (selectedArea != null &&
+        selectedHospital != null &&
+        selectedSpeciality != null &&
+        selectedDoctor != null &&
+        selectedDate != null &&
+        selectedTime != null) {
+      dbHelper
+          .addAppointment(
+            area: selectedArea!,
+            hospital: selectedHospital!,
+            specialization: selectedSpeciality!,
+            doctor: selectedDoctor!,
+            date: selectedDate!,
+            time: selectedTime!,
+          )
+          .then((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Janji Temu Berhasil Dibuat")),
+            );
+          })
+          .catchError((error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Gagal menyimpan janji temu: $error")),
+            );
+          });
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Silakan lengkapi semua bidang!")));
+    }
   }
 
   // Widget untuk membuat DropdownButtonFormField
