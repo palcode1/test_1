@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:test_1/services/firebase_auth_services.dart';
@@ -6,10 +7,39 @@ import 'package:test_1/views/history.dart';
 import 'package:test_1/views/login_screen.dart';
 import 'package:test_1/views/setting_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
 
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final AuthService authService = AuthService();
+  String userName = 'User';
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserName();
+  }
+
+  Future<void> fetchUserName() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        setState(() {
+          userName = data?['name'] ?? 'User';
+          isLoading = false;
+        });
+      }
+    }
+  }
+
   void logout(BuildContext context) async {
     await authService.signOut();
     Navigator.pushReplacement(
@@ -48,7 +78,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 10),
                       Text(
-                        'Hi, User',
+                        'Hi, $userName',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
