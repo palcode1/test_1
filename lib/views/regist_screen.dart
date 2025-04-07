@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:test_1/services/firebase_auth_services/firebase_auth_services.dart';
+import 'package:test_1/services/firebase_auth_services.dart';
 import 'package:test_1/views/home.dart';
 import 'package:test_1/views/login_screen.dart';
 
@@ -28,6 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Password dan Konfirmasi Password tidak sama!')),
       );
+      return;
     }
     String result = await authService.register(
       name: nameController.text.trim(),
@@ -37,11 +38,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
 
     if (result == 'success') {
-      // Jika registrasi berhasil, arahkan ke halaman Home atau Login
+      nameController.clear();
+      emailController.clear();
+      phoneController.clear();
+      passwordController.clear();
+      confirmPasswordController.clear();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Pendaftaran berhasil!")));
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),
       );
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Gagal daftar: $result")));
     }
   }
 

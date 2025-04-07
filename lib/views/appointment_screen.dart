@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_1/databases/db_model.dart';
 import 'package:test_1/databases/db_service.dart';
+import 'package:test_1/views/history.dart';
 
 class AppointmentScreen extends StatefulWidget {
   @override
@@ -152,6 +153,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           .then((_) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("Janji Temu Berhasil Dibuat")),
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HistoryScreen()),
             );
           })
           .catchError((error) {

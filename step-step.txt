@@ -1,0 +1,87 @@
+📁 lib/
+Folder utama untuk source code aplikasi:
+
+📁 models/
+Untuk semua model data:
+
+user_model.dart – data akun pasien
+
+appointment_model.dart – data janji temu
+
+doctor_model.dart – data dokter
+
+clinic_model.dart – data klinik
+
+specialization_model.dart – data spesialisasi
+
+area_model.dart – data area
+
+📁 services/
+Untuk interaksi dengan Firebase dan logika backend:
+
+firebase_auth_service.dart – login, registrasi, logout
+
+firebase_appointment_service.dart – CRUD janji temu
+
+firebase_clinic_service.dart – fetch data klinik & area
+
+firebase_doctor_service.dart – fetch data dokter & spesialisasi
+
+📁 screens/
+Untuk semua tampilan aplikasi:
+
+📁 auth/
+
+login_screen.dart
+
+register_screen.dart
+
+📁 home/
+
+home_screen.dart
+
+📁 appointment/
+
+create_appointment_screen.dart
+
+appointment_history_screen.dart
+
+📁 doctor/
+
+doctor_list_screen.dart
+
+📁 clinic/
+
+clinic_location_screen.dart
+
+📁 widgets/
+Untuk komponen UI yang bisa digunakan ulang:
+
+custom_dropdown.dart
+
+custom_date_picker.dart
+
+doctor_card.dart
+
+appointment_card.dart
+
+📁 providers/ (jika pakai Provider atau Riverpod)
+Untuk state management:
+
+user_provider.dart
+
+appointment_provider.dart
+
+clinic_provider.dart
+
+📁 utils/
+Untuk helper atau fungsi utilitas:
+
+validators.dart – validasi input
+
+constants.dart – warna, string, dll
+
+formatters.dart – format tanggal, waktu
+
+📁 routes/
+app_routes.dart – semua route screen dalam satu tempat

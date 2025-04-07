@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:test_1/services/firebase_auth_services/firebase_auth_services.dart';
+import 'package:test_1/services/firebase_auth_services.dart';
 import 'package:test_1/views/appointment_screen.dart';
+import 'package:test_1/views/history.dart';
 import 'package:test_1/views/login_screen.dart';
 import 'package:test_1/views/setting_screen.dart';
 
@@ -136,6 +137,15 @@ class HomeScreen extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) => AppointmentScreen()),
           );
+        } else if (title == 'Riwayat') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HistoryScreen()),
+          );
+        } else if (title == 'Rumah Sakit') {
+          // Navigasi ke halaman Rumah Sakit
+        } else if (title == 'Dokter') {
+          // Navigasi ke halaman Dokter
         }
       },
       child: SizedBox(

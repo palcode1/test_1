@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:test_1/services/firebase_auth_services/firebase_auth_services.dart';
+import 'package:test_1/services/firebase_auth_services.dart';
 import 'package:test_1/views/apps_setting/edit_password.dart';
 import 'package:test_1/views/login_screen.dart';
 
