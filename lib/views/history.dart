@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:test_1/databases/db_service.dart';
+import 'package:test_1/views/appointment_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
   @override
@@ -33,6 +34,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
       setState(() {
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> _deleteAppointment(String docId) async {
+    try {
+      await dbHelper.deleteAppointment(docId);
+      _loadAppointments(); // Refresh data setelah hapus
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Janji temu berhasil dihapus")));
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Gagal menghapus janji temu: $e")));
     }
   }
 
@@ -83,14 +98,57 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               children: [
                                 IconButton(
                                   icon: Icon(Icons.edit, color: Colors.blue),
-                                  onPressed: () {
-                                    // _showEditDialog(appt); // edit dialog
+                                  onPressed: () async {
+                                    final result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => AppointmentScreen(
+                                              appointmentData: appt,
+                                              appointmentId: appt['id'],
+                                            ),
+                                      ),
+                                    );
+
+                                    if (result == true) {
+                                      _loadAppointments(); // reload data jika form berhasil simpan/edit
+                                    }
                                   },
                                 ),
                                 IconButton(
                                   icon: Icon(Icons.delete, color: Colors.red),
                                   onPressed: () {
-                                    // _deleteAppointment(appt['id']);
+                                    showDialog(
+                                      context: context,
+                                      builder:
+                                          (ctx) => AlertDialog(
+                                            title: Text("Konfirmasi"),
+                                            content: Text(
+                                              "Yakin ingin menghapus janji temu ini?",
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed:
+                                                    () => Navigator.pop(ctx),
+                                                child: Text("Batal"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(ctx);
+                                                  _deleteAppointment(
+                                                    appt['id'],
+                                                  );
+                                                },
+                                                child: Text(
+                                                  "Hapus",
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                    );
                                   },
                                 ),
                               ],

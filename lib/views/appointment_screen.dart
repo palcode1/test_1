@@ -4,6 +4,11 @@ import 'package:test_1/databases/db_service.dart';
 import 'package:test_1/views/history.dart';
 
 class AppointmentScreen extends StatefulWidget {
+  final Map<String, dynamic>? appointmentData;
+  final String? appointmentId;
+
+  AppointmentScreen({this.appointmentData, this.appointmentId});
+
   @override
   _AppointmentScreenState createState() => _AppointmentScreenState();
 }
@@ -17,6 +22,20 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   String? selectedTime;
 
   final DBHelper dbHelper = DBHelper(); // Inisialisasi DBHelper
+
+  @override
+  void initState() {
+    super.initState();
+    final data = widget.appointmentData;
+    if (data != null) {
+      selectedArea = data['area'];
+      selectedHospital = data['hospital'];
+      selectedSpeciality = data['specialization'];
+      selectedDoctor = data['doctor'];
+      selectedDate = data['date'];
+      selectedTime = data['time'];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +134,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   padding: EdgeInsets.symmetric(vertical: 15),
                 ),
                 onPressed: () {
-                  _saveAppointment(); // Simpan data ke Firestore
+                  if (widget.appointmentId != null) {
+                    _updateAppointmentFull(widget.appointmentId!);
+                  } else {
+                    _saveAppointment();
+                  } // Simpan data ke Firestore
                 },
                 child: Text(
                   "Buat Janji Temu",
@@ -141,27 +164,95 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         selectedDoctor != null &&
         selectedDate != null &&
         selectedTime != null) {
+      if (widget.appointmentId != null) {
+        // Edit janji temu
+        dbHelper
+            .updateAppointmentFull(
+              widget.appointmentId!,
+              selectedArea!,
+              selectedHospital!,
+              selectedSpeciality!,
+              selectedDoctor!,
+              selectedDate!,
+              selectedTime!,
+            )
+            .then((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Janji Temu Berhasil Diperbarui")),
+              );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HistoryScreen()),
+              );
+            })
+            .catchError((error) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Gagal memperbarui janji temu: $error")),
+              );
+            });
+      } else {
+        // Tambah janji temu baru
+        dbHelper
+            .addAppointment(
+              area: selectedArea!,
+              hospital: selectedHospital!,
+              specialization: selectedSpeciality!,
+              doctor: selectedDoctor!,
+              date: selectedDate!,
+              time: selectedTime!,
+            )
+            .then((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Janji Temu Berhasil Dibuat")),
+              );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HistoryScreen()),
+              );
+            })
+            .catchError((error) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Gagal menyimpan janji temu: $error")),
+              );
+            });
+      }
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Silakan lengkapi semua bidang!")));
+    }
+  }
+
+  void _updateAppointmentFull(String id) {
+    if (selectedArea != null &&
+        selectedHospital != null &&
+        selectedSpeciality != null &&
+        selectedDoctor != null &&
+        selectedDate != null &&
+        selectedTime != null) {
       dbHelper
-          .addAppointment(
-            area: selectedArea!,
-            hospital: selectedHospital!,
-            specialization: selectedSpeciality!,
-            doctor: selectedDoctor!,
-            date: selectedDate!,
-            time: selectedTime!,
+          .updateAppointmentFull(
+            id,
+            selectedArea!,
+            selectedHospital!,
+            selectedSpeciality!,
+            selectedDoctor!,
+            selectedDate!,
+            selectedTime!,
           )
           .then((_) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Janji Temu Berhasil Dibuat")),
+              SnackBar(content: Text("Janji Temu Berhasil Diperbarui")),
             );
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HistoryScreen()),
-            );
+            Navigator.of(context).pop(true); // Kembali ke halaman sebelumnya
+            // Navigator.pushReplacement(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => HistoryScreen()),
+            // );
           })
           .catchError((error) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Gagal menyimpan janji temu: $error")),
+              SnackBar(content: Text("Gagal memperbarui janji temu: $error")),
             );
           });
     } else {

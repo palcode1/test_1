@@ -39,15 +39,23 @@ class DBHelper {
   }
 
   /// Memperbarui tanggal dan waktu janji temu berdasarkan document ID
-  Future<void> updateAppointment(
+  Future<void> updateAppointmentFull(
     String docId,
-    String newDate,
-    String newTime,
+    String area,
+    String hospital,
+    String specialization,
+    String doctor,
+    String date,
+    String time,
   ) async {
     try {
       await _firestore.collection('appointments').doc(docId).update({
-        'date': newDate,
-        'time': newTime,
+        'area': area,
+        'hospital': hospital,
+        'specialization': specialization,
+        'doctor': doctor,
+        'date': date,
+        'time': time,
       });
     } catch (e) {
       throw Exception("Gagal memperbarui janji temu: $e");
