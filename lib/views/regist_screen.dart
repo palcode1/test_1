@@ -79,7 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Image.asset('assets/images/clinic_logo.png', height: 80),
                   SizedBox(height: 20),
                   Text(
-                    'Welcome to Klinik Medika Mobile',
+                    'Welcome to RS Medika Mobile',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 20),

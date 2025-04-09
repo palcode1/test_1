@@ -101,13 +101,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ), //Penutup Row utama untuk header
             SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(height: 60, width: 140, color: Colors.grey[300]),
-                Container(height: 60, width: 140, color: Colors.grey[300]),
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //   children: [
+            //     Container(height: 60, width: 140, color: Colors.grey[300]),
+            //     Container(height: 60, width: 140, color: Colors.grey[300]),
+            //   ],
+            // ),
             SizedBox(height: 20),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
