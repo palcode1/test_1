@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:test_1/firebase_options.dart';
 import 'package:test_1/views/home.dart';
 import 'package:test_1/views/login_screen.dart';
+import 'package:test_1/views/splashscreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,14 +19,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home:
-          FirebaseAuth.instance.currentUser == null
-              ? LoginScreen()
-              : HomeScreen(),
+      home: const SplashScreen(),
     );
   }
 }
